@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改页面</title>
+</head>
+<body>
+      <h1>修改商品</h1>
+      <table border="1" cellspacing="1">
+        <tr>
+           <th>商品名</th>
+            <th><input type="text" id="goodsName" class="text"></th>
+        </tr>
+          <tr>
+              <th>商品标题</th>
+              <th><input type="text" id="goodsTitle" class="text"></th>
+          </tr>
+          <tr>
+              <th>基础价格</th>
+              <th><input type="text" id="basePrice" class="text"></th>
+          </tr>
+          <tr>
+              <th>价格</th>
+              <th><input type="text" id="price" class="text"></th>
+          </tr>
+          <tr>
+              <th>成本价格</th>
+              <th><input type="text" id="costPrice" class="text"></th>
+          </tr>
+          <tr>
+              <th>库存数量</th>
+              <th><input type="text" id="stockNum" class="text"></th>
+          </tr>
+          <tr>
+              <th>商品介绍</th>
+              <th height="100px"><p><input type="text" id="goodsDesc" height="98px" class="text"></p></div></th>
+          </tr>
+          <tr>
+              <th><input type="button" value="保存" onclick="saveData()"></th>
+              <th><input type="button" value="重置" onclick="resetData()"></th>
+          </tr>
+      </table>
+      <script src="jquery/jquery-2.1.1.min.js"></script>
+      <script type="text/javascript">
+          var  id = window.location.search.split("=")[1];
+          $(function () {
+              alert(id)
+              $.ajax({
+                  type:"POST",
+                  url:"findGoodsInfoByID",
+                  contentType:"application/json",
+                  data:JSON.stringify({"id":id}),
+                  dataType:"json",
+                  success:function (data) {
+                    console.log(data);
+                    $("#goodsName").val(data.goodsName);
+                    $("#goodsTitle").val(data.goodsTitle);
+                    $("#basePrice").val(data.basePrice);
+                    $("#price").val(data.price);
+                    $("#costPrice").val(data.costPrice);
+                    $("#stockNum").val(data.stockNum);
+                    $("#goodsDesc").val(data.goodsDesc);
+                  }
+              })
+
+          })
+          function resetData() {
+              $(".text").val("");
+          }
+          function saveData() {
+              var goodsName =$.trim($("#goodsName").val())
+              var goodsTitle =$.trim($("#goodsTitle").val()) ;
+              var basePrice =$.trim($("#basePrice").val()) ;
+              var price=$.trim($("#price").val()) ;
+              var costPrice=$.trim($("#costPrice").val()) ;
+              var stockNum =$.trim($("#stockNum").val()) ;
+              var goodsDesc =$.trim($("#goodsDesc").val()) ;
+              $.ajax({
+                  type:"POST",
+                  url:"updateGoodsInfo",
+                  contentType:"application/json",
+                  dataType:"json",
+                  data:JSON.stringify(
+                      {"id":id,
+                      "goodsName":goodsName,
+                      "goodsTitle":goodsTitle,
+                      "basePrice":basePrice,
+                      "price":price,
+                       "costPrice":costPrice,
+                        "stockNum":stockNum,
+                          "goodsDesc":goodsDesc}),
+                  success:function (data) {
+                      if(data==true){
+                          window.location.href ="show.html"
+                      }
+                  },
+                  error:function (data) {
+                      if(data==false){
+                          alert("服务器炸了")
+                      }
+
+                  }
+              })
+          }
+      </script>
+</body>
+</html>

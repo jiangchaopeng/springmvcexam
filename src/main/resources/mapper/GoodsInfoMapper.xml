@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.mapper.GoodsInfoMapper">
+
+    
+    <select id="findGoodsInfo" resultType="com.qf.pojo.TGoods" parameterType="com.qf.pojo.TGoods">
+        select * from t_goods where
+        <if test="status!= null and status !=''">
+            status=#{status}
+        </if>
+        <if test="goodsName !=null and goodsName !=''">
+         and  goodsName=#{goodsName}
+        </if>
+        <if test="min != null and min !='' and max!=null and max!=''">
+        and price between #{min} and #{max}
+        </if>
+    </select>
+
+    <update id="updateGoodsInfo" parameterType="com.qf.pojo.TGoods">
+        update t_goods set
+        <if test="goodsName!= null and goodsName !=''">
+            goodsName = #{goodsName},
+        </if>
+        <if test="goodsTitle !=null and goodsTitle !=''">
+            goodsTitle =#{goodsTitle},
+        </if>
+        <if test="basePrice !=null and basePrice !=''">
+            basePrice = #{basePrice},
+        </if>
+        <if test="price !=null and price!=''" >
+            price = #{price},
+        </if>
+        <if test="costPrice != null and costPrice != ''">
+            costPrice = #{costPrice},
+        </if>
+        <if test="stockNum != null and stockNum !=''">
+            stockNum = #{stockNum},
+        </if>
+        <if test="goodsDesc != null and goodsDesc !=''" >
+            goodsDesc = #{goodsDesc}
+        </if>
+        where id = #{id}
+    </update>
+
+    <update id="delGoodsInfo" parameterType="com.qf.pojo.TGoods">
+        update t_goods set status = "DOWN" where id = #{id}
+    </update>
+
+
+    <select id="findGoodsInfoByID" parameterType="com.qf.pojo.TGoods" resultType="com.qf.pojo.TGoods">
+        select * from t_goods where id = #{id}
+    </select>
+
+    <insert id="addGoodsInfo" parameterType="com.qf.pojo.TGoods">
+        insert into t_goods(id,goodsName,goodsTitle,basePrice,price,costPrice,stockNum,goodsDesc,status)
+        values(default,#{goodsName},#{goodsTitle},#{basePrice},#{price},#{costPrice},#{stockNum},#{goodsDesc},#{status})
+    </insert>
+</mapper>

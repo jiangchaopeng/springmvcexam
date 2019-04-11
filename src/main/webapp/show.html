@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<body>
+<div>
+    <table border="1" cellspacing="1" id="tb">
+        <tr>
+            <td colspan="3"><span>商品名：</span><input id="goodname" type="text"></td>
+            <td colspan="3"><span>价格：</span> <input type="text"id="minprice"><span>------</span> <input type="text"id="maxprice"> </td>
+            <td></td>
+            <td><span>是否上架</span>
+                <select id="updown"  >
+                <option value="TOP" selected ="selected" >是</option>
+                <option value="DOWN">否</option>
+            </select></td>
+            <td><input type="button" value="添加商品" onclick="addGoodsInfo()"></td>
+            <td><input type="button" id="bt" onclick="init()" value="查询"> </td>
+        </tr>
+            <tr id="myTr">
+                <th>商品标题</th>
+                <th>商品名</th>
+                <th>基础价格</th>
+                <th>价格</th>
+                <th>成本价格</th>
+                <th>库存数量</th>
+                <th>商品描述</th>
+                <th>操作</th>
+            </tr>
+
+    </table>
+
+</div>
+
+
+<script src="jquery/jquery-2.1.1.min.js"></script>
+<script type="text/javascript">
+    function init() {
+        var choose = $("#updown").val();
+        var goodname =$.trim($("#goodname").val());
+        var min = $("#minprice").val();
+        var max = $("#maxprice").val();
+        $("#tb tr:not(:lt(2))").empty("");
+        $.ajax({
+            type:"POST",
+            url:"findGoodsInfo",
+            contentType:"application/json",
+            data:JSON.stringify({"goodsName":goodname,"min":min,"max":max,"status":choose}),
+            dataType:"json",
+            success:function (data) {
+                console.log(data)
+                $(data).each(function (index,item) {
+                    $(" <tr>\n" +
+                        "                <td>"+item.goodsTitle+"</td>\n" +
+                        "                <td>"+item.goodsName+"</td>\n" +
+                        "                <td>"+item.basePrice+"</td>\n" +
+                        "                <td>"+item.price+"</td>\n" +
+                        "                <td>"+item.costPrice+"</td>\n" +
+                        "                <td>"+item.stockNum+"</td>\n" +
+                        "                <td>"+item.goodsDesc+"</td>\n" +
+                        "                <td> <a href=\"edit.html?id="+item.id+"\">修改</a>\n" +
+                        "                <span>/</span>\n" +
+                        "                <a href='javascript:void(0)' onclick='delData("+item.id+")'>删除</a></td>\n" +
+                        "            </tr>").insertAfter("#myTr")
+                })
+            }
+        })
+    }
+    init();
+    function delData(id) {
+        alert(id)
+        $.ajax({
+            type:"POST",
+            url:"delGoodsInfo",
+            contentType:"application/json",
+            dataType:"json",
+            data:JSON.stringify({"id":id}),
+            success:function (data) {
+                console.log(data)
+                if(data==true){
+                    window.location.reload();
+                }
+            },
+            error:function (data) {
+                if(data==false){
+                    alert("服务器炸了");
+                }
+            }
+        })
+
+    }
+    function addGoodsInfo(){
+        window.location.href ="add.html"
+    }
+</script>
+</body>
+</html>
